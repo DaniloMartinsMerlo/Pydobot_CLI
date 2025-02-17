@@ -28,11 +28,9 @@ class DobotController:
     def move_to(self, position, wait=True):
         self.dobot.move_to(*position.to_list(), wait=wait)
 
-    def set_home(self, position):
-        self.home = position
 
     def home(self, wait=True):
-        self.move_to(self.home, wait=wait)
+            self.move_to(self.home_position, wait=wait)
         
     def enable_tool(self, time):
         self.dobot.suck(True)
