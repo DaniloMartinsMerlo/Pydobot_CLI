@@ -60,11 +60,36 @@ def set_speed(
 ):
     dobot.set_speed(speed, acceleration)
 
-# @cli.command()
-# def save():
+@cli.command()
+def save(
+    file_path: Annotated[str, typer.Argument(help="Path .json to save the current position")]
+        ):
+    
+    current_position = dobot.pose()
 
-# @cli.command()
-# def run():
+    try:
+        with open(file_path, "r") as file:
+            saved_positions = json.load(file)
+    except FileNotFoundError:
+        saved_positions = {"positions": []}
+
+    with open(file_path, "w") as file:
+        saved_positions["positions"].append(current_position.to_dict())
+        json.dump(saved_positions, file, indent=4)
+
+@cli.command()
+def run(
+    file_path: Annotated[str, typer.Argument(help="Path .json to the file with positions")]
+    ):
+    with open(file_path, "r") as file:
+        data = json.load(file)
+    
+    for position in data["positions"]:
+        spinner = yaspin(text=f"Moving to {position}...")
+        current_position = Position()
+        current_position.load_from_dict(position)
+        dobot.move_to(current_position, wait=True)
+        spinner.stop()
 
 def main():
     port = '/dev/ttyACM0'
