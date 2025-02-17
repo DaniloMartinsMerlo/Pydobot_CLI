@@ -19,7 +19,8 @@ class Position:
         self.r = round(r, 2)
         self.j1 = round(j1, 2)
         self.j2 = round(j2, 2)
-        self.j3 = round(j2, 2)
+        self.j3 = round(j3, 2)
+        self.j4 = round(j4, 2)
         self.grip = grip 
         self.suck = suck
 
