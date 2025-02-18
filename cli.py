@@ -1,14 +1,22 @@
 import typer
 from yaspin import yaspin
 import json
+import os
 
 from typing_extensions import Annotated
 from dobot.dobotController import DobotController
 from dobot.position import Position
 
 cli = typer.Typer()
-dobot = DobotController()
+home_file_path = "config.json"
 
+with open(home_file_path, "r") as file:
+    home_saved_positions = json.load(file)
+    
+    home_position = Position()
+    home_position.home_from_dict(home_saved_positions["home"])
+
+dobot = DobotController(home_position)
 
 @cli.command()
 def move_to(
@@ -35,6 +43,18 @@ def set_home(
     z: Annotated[float, typer.Argument(help="Z coordinate to set home")],
     r: Annotated[float, typer.Argument(help="R coordinate to set home")],
 ):
+
+    try:
+        with open(home_file_path, "r") as file:
+            saved_positions = json.load(file)
+    except FileNotFoundError:
+        saved_positions = {"home": []}
+
+    saved_positions["home"] = (Position(x, y, z, r).to_home_dict())
+
+    with open(home_file_path, "w") as file:
+        json.dump(saved_positions, file, indent=4)
+
     dobot.set_home(Position(x, y, z, r))
 
 @cli.command()
@@ -62,26 +82,26 @@ def set_speed(
 
 @cli.command()
 def save(
-    file_path: Annotated[str, typer.Argument(help="Path .json to save the current position")]
+    save_file_path: Annotated[str, typer.Argument(help="Path .json to save the current position")]
         ):
     
     current_position = dobot.pose()
 
     try:
-        with open(file_path, "r") as file:
+        with open(save_file_path, "r") as file:
             saved_positions = json.load(file)
     except FileNotFoundError:
         saved_positions = {"positions": []}
 
-    with open(file_path, "w") as file:
+    with open(save_file_path, "w") as file:
         saved_positions["positions"].append(current_position.to_dict())
         json.dump(saved_positions, file, indent=4)
 
 @cli.command()
 def run(
-    file_path: Annotated[str, typer.Argument(help="Path .json to the file with positions")]
+    run_file_path: Annotated[str, typer.Argument(help="Path .json to the file with positions")]
     ):
-    with open(file_path, "r") as file:
+    with open(run_file_path, "r") as file:
         data = json.load(file)
     
     for position in data["positions"]:

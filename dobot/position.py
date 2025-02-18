@@ -53,5 +53,19 @@ class Position:
             "suction": self.suction,
         }
 
+    def home_from_dict(self, data):
+        self.x = data["x"]
+        self.y = data["y"]
+        self.z = data["z"]
+        self.r = data["r"]
+        
+    def to_home_dict(self):
+        return {
+            "x": self.x,
+            "y": self.y,
+            "z": self.z,
+            "r": self.r,
+        }
+    
     def __repr__(self):
         return f"x: {self.x}, y: {self.y}, z: {self.z}, r: {self.r}, j1: {self.j1}, j2: {self.j2}, j3: {self.j3}, j4: {self.j4}, grip: {self.grip}, suck: {self.suck}"
