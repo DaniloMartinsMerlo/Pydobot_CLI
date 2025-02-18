@@ -17,8 +17,9 @@ class DobotController:
 
     def pose(self):
         current_position = Position(*self.dobot.pose())
-        current_position.suck == self.tool_enable
+        current_position.suction == self.tool_enable
         print(current_position)
+        return current_position
     
     def set_speed(self, speed, acceleration):
         self.dobot.speed(speed, acceleration)

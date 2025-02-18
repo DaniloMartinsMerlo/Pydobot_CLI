@@ -59,13 +59,13 @@ def set_home(
 
 @cli.command()
 def enable_tool(
-    time: Annotated[float, typer.Option(help='Wait time')]
+    time: Annotated[float, typer.Option(help='Wait time')] = 100
 ):
     dobot.enable_tool(time)
     
 @cli.command()
 def disable_tool(
-    time: Annotated[float, typer.Option(help='Wait time')]
+    time: Annotated[float, typer.Option(help='Wait time')] = 100
 ):
     dobot.disable_tool(time)
     
@@ -75,35 +75,36 @@ def current():
 
 @cli.command()
 def set_speed(
-    speed: Annotated[float, typer.Option(help='Dobot speed')],
-    acceleration: Annotated[float, typer.Option(help='Dobot acceleration')]
+    speed: Annotated[float, typer.Argument(help='Dobot speed')],
+    acceleration: Annotated[float, typer.Argument(help='Dobot acceleration')]
 ):
     dobot.set_speed(speed, acceleration)
 
 @cli.command()
 def save(
-    save_file_path: Annotated[str, typer.Argument(help="Path .json to save the current position")]
-        ):
-    
+    file_path: Annotated[str, typer.Argument(help="Path to save the current position")],
+):
+
     current_position = dobot.pose()
 
     try:
-        with open(save_file_path, "r") as file:
+        with open(file_path, "r") as file:
             saved_positions = json.load(file)
     except FileNotFoundError:
         saved_positions = {"positions": []}
 
-    with open(save_file_path, "w") as file:
+    with open(file_path, "w") as file:
         saved_positions["positions"].append(current_position.to_dict())
         json.dump(saved_positions, file, indent=4)
 
+
 @cli.command()
 def run(
-    run_file_path: Annotated[str, typer.Argument(help="Path .json to the file with positions")]
-    ):
-    with open(run_file_path, "r") as file:
+    file_path: Annotated[str, typer.Argument(help="Path to the file with positions")],
+):
+    with open(file_path, "r") as file:
         data = json.load(file)
-    
+
     for position in data["positions"]:
         spinner = yaspin(text=f"Moving to {position}...")
         current_position = Position()

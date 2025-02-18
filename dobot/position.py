@@ -10,7 +10,7 @@ class Position:
             j3: float = 0.0,
             j4: float = 0.0,
             grip: bool = False,
-            suck: bool = False
+            suction: bool = False
             ):
         
         self.x = round(x, 2)
@@ -22,7 +22,7 @@ class Position:
         self.j3 = round(j3, 2)
         self.j4 = round(j4, 2)
         self.grip = grip 
-        self.suck = suck
+        self.suction = suction
 
     def to_list(self):
         return [self.x, self.y, self.z, self.r]
@@ -68,4 +68,4 @@ class Position:
         }
     
     def __repr__(self):
-        return f"x: {self.x}, y: {self.y}, z: {self.z}, r: {self.r}, j1: {self.j1}, j2: {self.j2}, j3: {self.j3}, j4: {self.j4}, grip: {self.grip}, suck: {self.suck}"
+        return f"x: {self.x}, y: {self.y}, z: {self.z}, r: {self.r}, j1: {self.j1}, j2: {self.j2}, j3: {self.j3}, j4: {self.j4}, grip: {self.grip}, suction: {self.suction}"
