@@ -84,7 +84,7 @@ def run(
     with open(file_path, "r") as file:
         data = json.load(file)
 
-    for position in data["bin_3"]:
+    for position in data["bin_1"]:
         if (position["suction"]):
             enable_tool()
         else:
@@ -92,7 +92,18 @@ def run(
         spinner = yaspin(text=f"Moving to {position}...")
         current_position = Position()
         current_position.load_from_dict(position)
-        dobot.move_j_to(current_position, wait=True)
+        dobot.move_l_to(current_position, wait=True)
+        spinner.stop()
+    
+    for position in data["delivery"]:
+        if (position["suction"]):
+            enable_tool()
+        else:
+            disable_tool()
+        spinner = yaspin(text=f"Moving to {position}...")
+        current_position = Position()
+        current_position.load_from_dict(position)
+        dobot.move_l_to(current_position, wait=True)
         spinner.stop()
 
     
