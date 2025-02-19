@@ -10,7 +10,8 @@ class Position:
             j3: float = 0.0,
             j4: float = 0.0,
             grip: bool = False,
-            suction: bool = False
+            suction: bool = False,
+            move: str = "move_l"
             ):
         
         self.x = round(x, 2)
@@ -23,6 +24,7 @@ class Position:
         self.j4 = round(j4, 2)
         self.grip = grip 
         self.suction = suction
+        self.move = move
 
     def to_list(self):
         return [self.x, self.y, self.z, self.r]
@@ -38,6 +40,7 @@ class Position:
         self.j4 = data["j4"]
         self.grip = data.get("grip", False)
         self.suction = data.get("suction", False)
+        self.move = data.get("move", False)
         
     def to_dict(self):
         return {
@@ -51,20 +54,7 @@ class Position:
             "j4": self.j4,
             "grip": self.grip,
             "suction": self.suction,
-        }
-
-    def home_from_dict(self, data):
-        self.x = data["x"]
-        self.y = data["y"]
-        self.z = data["z"]
-        self.r = data["r"]
-        
-    def to_home_dict(self):
-        return {
-            "x": self.x,
-            "y": self.y,
-            "z": self.z,
-            "r": self.r,
+            "move": self.move
         }
     
     def __repr__(self):
