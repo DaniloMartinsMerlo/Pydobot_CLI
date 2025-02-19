@@ -7,19 +7,28 @@ from dobot.dobotController import DobotController
 from dobot.position import Position
 
 cli = typer.Typer()
+
 dobot = DobotController()
 
-
 @cli.command()
-def move_to(
+def move_j_to(
     x: Annotated[float, typer.Argument(help="X coordinate to move to")],
     y: Annotated[float, typer.Argument(help="Y coordinate to move to")],
     z: Annotated[float, typer.Argument(help="Z coordinate to move to")],
     r: Annotated[float, typer.Argument(help="R coordinate to move to")],
     wait: Annotated[bool, typer.Option(help="Wait for the movement to finish")] = True,
 ):
-    dobot.move_to(Position(x, y, z, r), wait)
+    dobot.move_j_to(Position(x, y, z, r), wait)
 
+@cli.command()
+def move_l_to(
+    x: Annotated[float, typer.Argument(help="X coordinate to move to")],
+    y: Annotated[float, typer.Argument(help="Y coordinate to move to")],
+    z: Annotated[float, typer.Argument(help="Z coordinate to move to")],
+    r: Annotated[float, typer.Argument(help="R coordinate to move to")],
+    wait: Annotated[bool, typer.Option(help="Wait for the movement to finish")] = True,
+):
+    dobot.move_l_to(Position(x, y, z, r), wait)
 
 @cli.command()
 def home(
@@ -27,25 +36,15 @@ def home(
 ):
     dobot.home(wait)
 
-
-@cli.command()
-def set_home(
-    x: Annotated[float, typer.Argument(help="X coordinate to set home")],
-    y: Annotated[float, typer.Argument(help="Y coordinate to set home")],
-    z: Annotated[float, typer.Argument(help="Z coordinate to set home")],
-    r: Annotated[float, typer.Argument(help="R coordinate to set home")],
-):
-    dobot.set_home(Position(x, y, z, r))
-
 @cli.command()
 def enable_tool(
-    time: Annotated[float, typer.Option(help='Wait time')]
+    time: Annotated[float, typer.Option(help='Wait time')] = 100
 ):
     dobot.enable_tool(time)
     
 @cli.command()
 def disable_tool(
-    time: Annotated[float, typer.Option(help='Wait time')]
+    time: Annotated[float, typer.Option(help='Wait time')] = 100
 ):
     dobot.disable_tool(time)
     
@@ -55,16 +54,16 @@ def current():
 
 @cli.command()
 def set_speed(
-    speed: Annotated[float, typer.Option(help='Dobot speed')],
-    acceleration: Annotated[float, typer.Option(help='Dobot acceleration')]
+    speed: Annotated[float, typer.Argument(help='Dobot speed')],
+    acceleration: Annotated[float, typer.Argument(help='Dobot acceleration')]
 ):
     dobot.set_speed(speed, acceleration)
 
 @cli.command()
 def save(
-    file_path: Annotated[str, typer.Argument(help="Path .json to save the current position")]
-        ):
-    
+    file_path: Annotated[str, typer.Argument(help="Path to save the current position")],
+):
+
     current_position = dobot.pose()
 
     try:
@@ -77,20 +76,26 @@ def save(
         saved_positions["positions"].append(current_position.to_dict())
         json.dump(saved_positions, file, indent=4)
 
+
 @cli.command()
 def run(
-    file_path: Annotated[str, typer.Argument(help="Path .json to the file with positions")]
-    ):
+    file_path: Annotated[str, typer.Argument(help="Path to the file with positions")],
+):
     with open(file_path, "r") as file:
         data = json.load(file)
-    
-    for position in data["positions"]:
+
+    for position in data["bin_3"]:
+        if (position["suction"]):
+            enable_tool()
+        else:
+            disable_tool()
         spinner = yaspin(text=f"Moving to {position}...")
         current_position = Position()
         current_position.load_from_dict(position)
-        dobot.move_to(current_position, wait=True)
+        dobot.move_j_to(current_position, wait=True)
         spinner.stop()
 
+    
 def main():
     port = '/dev/ttyACM0'
     spinner = yaspin(text=f"Connecting with port {port}...")

@@ -10,7 +10,8 @@ class Position:
             j3: float = 0.0,
             j4: float = 0.0,
             grip: bool = False,
-            suck: bool = False
+            suction: bool = False,
+            move: str = "move_l"
             ):
         
         self.x = round(x, 2)
@@ -22,36 +23,39 @@ class Position:
         self.j3 = round(j3, 2)
         self.j4 = round(j4, 2)
         self.grip = grip 
-        self.suck = suck
+        self.suction = suction
+        self.move = move
 
-def to_list(self):
-    return [self.x, self.y, self.z, self.r]
+    def to_list(self):
+        return [self.x, self.y, self.z, self.r]
 
-def load_from_dict(self, data):
-    self.x = data["x"]
-    self.y = data["y"]
-    self.z = data["z"]
-    self.r = data["r"]
-    self.j1 = data["j1"]
-    self.j2 = data["j2"]
-    self.j3 = data["j3"]
-    self.j4 = data["j4"]
-    self.grip = data.get("grip", False)
-    self.suction = data.get("suction", False)
+    def load_from_dict(self, data):
+        self.x = data["x"]
+        self.y = data["y"]
+        self.z = data["z"]
+        self.r = data["r"]
+        self.j1 = data["j1"]
+        self.j2 = data["j2"]
+        self.j3 = data["j3"]
+        self.j4 = data["j4"]
+        self.grip = data.get("grip", False)
+        self.suction = data.get("suction", False)
+        self.move = data.get("move", False)
+        
+    def to_dict(self):
+        return {
+            "x": self.x,
+            "y": self.y,
+            "z": self.z,
+            "r": self.r,
+            "j1": self.j1,
+            "j2": self.j2,
+            "j3": self.j3,
+            "j4": self.j4,
+            "grip": self.grip,
+            "suction": self.suction,
+            "move": self.move
+        }
     
-def to_dict(self):
-    return {
-        "x": self.x,
-        "y": self.y,
-        "z": self.z,
-        "r": self.r,
-        "j1": self.j1,
-        "j2": self.j2,
-        "j3": self.j3,
-        "j4": self.j4,
-        "grip": self.grip,
-        "suction": self.suction,
-    }
-
-def __repr__(self):
-    return f"x: {self.x}, y: {self.y}, z: {self.z}, r: {self.r}, j1: {self.j1}, j2: {self.j2}, j3: {self.j3}, j4: {self.j4}, grip: {self.grip}, suck: {self.suck}"
+    def __repr__(self):
+        return f"x: {self.x}, y: {self.y}, z: {self.z}, r: {self.r}, j1: {self.j1}, j2: {self.j2}, j3: {self.j3}, j4: {self.j4}, grip: {self.grip}, suction: {self.suction}"
