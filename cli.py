@@ -84,7 +84,7 @@ def run(
     with open(file_path, "r") as file:
         data = json.load(file)
 
-    for position in data["bin_3"]:
+    for position in data["positions"]:
         if (position["suction"]):
             enable_tool()
         else:
